@@ -13,7 +13,6 @@ type RequestHeader struct {
 	Ipaddress string `json:"ipaddress"`
 	Language  string `json:"language"`
 	Software  string `json:"software"`
-	HostName  string `json:"hostname"`
 }
 
 func main() {
@@ -30,14 +29,11 @@ func main() {
 }
 
 func reqHeaderParser(w http.ResponseWriter, r *http.Request) {
-	ip := r.Host
+	ip := r.RemoteAddr
 	lang := r.Header["Accept-Language"][0][:5]
 	softW := r.UserAgent()
-	host, err := os.Hostname()
-	if err != nil {
-		host = "unknown"
-	}
-	response := RequestHeader{Ipaddress: ip, Language: lang, Software: softW, HostName: host}
+
+	response := RequestHeader{Ipaddress: ip, Language: lang, Software: softW[13:30]}
 
 	jsonResp, _ := json.MarshalIndent(response, "", "\t")
 
