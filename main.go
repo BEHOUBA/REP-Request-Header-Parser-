@@ -23,7 +23,7 @@ func main() {
 	router.HandleFunc("/api/whoami/", reqHeaderParser)
 
 	server := http.Server{
-		Addr:    ":8080",
+		Addr:    getPort(),
 		Handler: router,
 	}
 	server.ListenAndServe()
@@ -53,4 +53,14 @@ func home(w http.ResponseWriter, r *http.Request) {
 	templ := template.Must(template.ParseFiles("index.html"))
 
 	templ.Execute(w, nil)
+}
+
+func getPort() string {
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		fmt.Println("Application running on local machine at port 8080...")
+		return ":8080"
+	}
+	return ":" + port
 }
